@@ -348,6 +348,8 @@
 ;; pathnames
 (defstore-cl-store (obj pathname stream)
   (output-type-code +pathname-code+ stream)
+  (store-object #-sbcl (pathname-host obj)
+                #+sbcl (host-namestring obj) stream)
   (store-object (pathname-device obj) stream)
   (store-object (pathname-directory obj) stream)
   (store-object (pathname-name obj) stream)
@@ -355,7 +357,8 @@
   (store-object (pathname-version obj) stream))
 
 (defrestore-cl-store (pathname stream)
-  (make-pathname    
+  (make-pathname
+   :host (restore-object stream)
    :device (restore-object stream)
    :directory (restore-object stream)
    :name (restore-object stream)
