@@ -47,18 +47,18 @@
 
 ;; fast storing for 32 bit ints
 (defparameter +32-bit-integer-code+ (register-code 24 '32-bit-integer))
-
+(defparameter +built-in-function-code+ (register-code 25 'built-in-function))
 (defparameter +function-code+ (register-code 26 'function nil))
 (defparameter +gf-code+ (register-code 27 'generic-function nil))
 
 ;; Used by SBCL and CMUCL.
-(defparameter +structure-class-code+ (register-code 28 'structure-class nil))
-(defparameter +struct-def-code+ (register-code 29 'struct-def nil))
+(defparameter +structure-class-code+ (register-code 28 'structure-class))
+(defparameter +struct-def-code+ (register-code 29 'struct-def))
 
-(defparameter +gensym-code+ (register-code 30 'gensym nil))
+(defparameter +gensym-code+ (register-code 30 'gensym))
 
-(defparameter +unicode-base-string-code+ (register-code 34 'unicode-base-string nil))
-(defparameter +simple-base-string-code+ (register-code 35 'simple-base-string nil))
+(defparameter +unicode-base-string-code+ (register-code 34 'unicode-base-string))
+(defparameter +simple-base-string-code+ (register-code 35 'simple-base-string))
 
 ;; setups for type code mapping
 (defun output-type-code (code stream)
@@ -762,12 +762,12 @@
                           obj)))))
   
 
+#-clisp
 (defstore-cl-store (obj function stream)
   (output-type-code +function-code+ stream)
   (store-object (get-function-name obj) stream))
 
-
-
+#-clisp
 (defrestore-cl-store (function stream)
   (fdefinition (restore-object stream)))
 

@@ -45,15 +45,15 @@ CLISP, ECL and AllegroCL are supported.")
   :name "CL-STORE"
   :author "Sean Ross <sross@common-lisp.net>"
   :maintainer "Sean Ross <sross@common-lisp.net>"
-  :version "0.8.1"
+  :version "0.8.3"
   :description "Serialization package"
   :long-description "Portable CL Package to serialize data"
   :licence "MIT"
   :serial t
   :components ((:file "package")
-               #+(and clisp (not mop))
-               (:non-required-file "mop")
                (:file "utils")
+               #+(or abcl (and clisp (not mop)))
+               (:file "mop")
                (:file "backends")
                (:file "plumbing")
                (:file "circularities")
@@ -71,9 +71,5 @@ CLISP, ECL and AllegroCL are supported.")
 (defsystem cl-store-tests
   :depends-on (rt cl-store)
   :components ((:file "tests")))
-
-(defmethod perform ((op test-op) (sys (eql (find-system :cl-store-tests))))
-  (funcall (find-symbol "RUN-TESTS" "CL-STORE-TESTS")
-           (find-symbol "CL-STORE" "CL-STORE")))
 
 ;; EOF

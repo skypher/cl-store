@@ -1,3 +1,10 @@
+2007-11-23 Sean Ross <sross@common-lisp.net>
+	0.8.3
+	* abcl/mop.lisp: MOP support for ABCL. Thanks to szergling.
+	* clisp/custom.lisp: Custom Closure serialization for CLISP. Thanks to szergling.
+	Functions are no longer reliably serializable between implementations.
+	* tests.lisp: New function tests for CLISP.
+	
 2007-10-30 Sean Ross <sross@common-lisp.net>
 	* cl-store.asd: Release 0.8
 	

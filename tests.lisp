@@ -563,6 +563,7 @@ bar")
          t)
 
 ;; large circular lists
+#-abcl
 (deftest large.1 (let ((list (make-list 100000)))
                    (setf (cdr (last list)) list)
                    (store list *test-file*)
@@ -571,6 +572,7 @@ bar")
          t)
 
 ;; large dotted lists
+#-abcl
 (deftestit large.2 (let ((list (make-list 100000)))
                      (setf (cdr (last list)) 'foo)
                      list))
@@ -596,9 +598,50 @@ bar")
   t)
 
 
+;; These tests are quite incorrect as there is no universal method
+;; test for function equality when they are not eq.
+;; While this will work for functions restored based on name
+;; it will most definitely not work for closures.
+;; So we just do limited tests on behaviour
+(deftestit function.1 #'car)
 
-(deftestit function.1 #'restores)
-(deftestit function.2 #'car)
+
+(deftest function.2 
+         (progn (store #'cl-store::mkstr *test-file*)
+           (let ((fn (restore *test-file*)))
+             (every (lambda (args)
+                      (string= (apply fn args) (apply #'cl-store::mkstr args)))
+                    '(("foobar" "baz")
+                      ("a" "b" "c")
+                      ("1 2" "ab " "f oO")))))
+         t)
+                      
+;; Closures are clisp only.
+#+clisp
+(deftest function.3
+         (progn (store (list #'(lambda (x y) (funcall x (1+ y)))
+                             #'(lambda (x) (expt x 3)))
+                       *test-file*)
+           (destructuring-bind (fn-a fn-b) (restore *test-file*)
+             (funcall fn-a fn-b 3)))
+         64)
+
+(let ((x 1))
+  (defun foo ()
+    (incf x))
+  (defun bar ()
+    (decf x)))
+
+;; While this works on all Lisps only CLISP is actually creating
+;; a fresh function on the restore.
+#+clisp
+(deftest function.4
+         (progn (store (list #'foo #'bar) *test-file*)
+           (destructuring-bind (fn-a fn-b) (restore *test-file*)
+             (values (funcall fn-a)
+                     (funcall fn-a)
+                     (funcall fn-b))))
+         2 3 2)
 
 (deftestit gfunction.1 #'cl-store:restore)
 (deftestit gfunction.2 #'cl-store:store)

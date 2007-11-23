@@ -35,7 +35,6 @@
   
   #+sbcl (:import-from #:sb-mop
                        #:generic-function-name
-                       #:slot-definition-name
                        #:slot-definition-allocation
                        #:slot-definition
                        #:compute-slots
@@ -62,7 +61,6 @@
   
   #+cmu  (:import-from #:pcl
                        #:generic-function-name
-                       #:slot-definition-name
                        #:slot-definition-allocation
                        #:compute-slots
                        #:slot-definition
@@ -86,7 +84,6 @@
   
   #+openmcl (:import-from #:openmcl-mop
                           #:generic-function-name
-                          #:slot-definition-name
                           #:slot-definition-allocation
                           #:compute-slots
                           #:slot-definition
@@ -104,7 +101,6 @@
 
   #+digitool (:import-from #:ccl
                            #:generic-function-name
-                           #:slot-definition-name
                            #:slot-definition-allocation
                            #:compute-slots
                            #:slot-definition
@@ -131,7 +127,6 @@
                         #:ensure-class)
   
   #+lispworks (:import-from #:clos
-               #:slot-definition-name
                #:generic-function-name
                #:slot-definition-allocation
                #:compute-slots
@@ -149,7 +144,6 @@
                #:ensure-class)
 
   #+(and clisp mop) (:import-from #:clos
-                     #:slot-definition-name
                      #:generic-function-name
                      #:slot-definition-allocation
                      #:compute-slots
@@ -167,7 +161,6 @@
                      #:ensure-class)
   
   #+allegro (:import-from #:mop
-                          #:slot-definition-name
                           #:generic-function-name
                           #:slot-definition-allocation
                           #:slot-definition
@@ -183,5 +176,25 @@
                           #:class-direct-superclasses
                           #:class-slots
                           #:ensure-class)
+  #+abcl (:import-from #:mop
+
+                       ;; All the commented out methods are defined in
+                       ;; abcl/custom.lisp
+                       
+                       #:generic-function-name
+                       ;;#:slot-definition-allocation
+                       #:slot-definition
+                       #:compute-slots
+                       ;;#:slot-definition-initform
+                       ;;#:slot-definition-initargs
+                       ;;#:slot-definition-name
+                       ;;#:slot-definition-readers
+                       ;;#:slot-definition-type
+                       ;;#:slot-definition-writers
+                       #:class-direct-default-initargs
+                       #:class-direct-slots
+                       #:class-direct-superclasses
+                       ; #:class-slots
+                       #:ensure-class)
   )
 ;; EOF
