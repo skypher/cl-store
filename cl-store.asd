@@ -45,7 +45,7 @@ CLISP, ECL and AllegroCL are supported.")
   :name "CL-STORE"
   :author "Sean Ross <sross@common-lisp.net>"
   :maintainer "Sean Ross <sross@common-lisp.net>"
-  :version "0.8.5"
+  :version "0.8.6"
   :description "Serialization package"
   :long-description "Portable CL Package to serialize data"
   :licence "MIT"

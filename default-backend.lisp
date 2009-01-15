@@ -746,7 +746,7 @@
     (declare (ignore l cp))
     (cond #+sbcl
           ;; handle (SB-C::&OPTIONAL-DISPATCH MAKE-FOO) names introduced around 1.0.15
-          ((and name (consp name) (not (cddr name)) (eql (first name) 'SB-C::&OPTIONAL-DISPATCH))
+          ((and name (consp name) (not (cddr name))  (eql (first name) (find-symbol "&OPTIONAL-DISPATCH" :sb-c)))
            (second name))
           ;; normal names and (setf name)
           ((and name (or (symbolp name) (consp name))) name)
