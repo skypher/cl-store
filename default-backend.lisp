@@ -742,9 +742,14 @@
                      *sbcl-readtable*)
 
 (defun get-function-name (obj)
-  (multiple-value-bind (l cp name) (function-lambda-expression obj) 
+  (multiple-value-bind (l cp name) (function-lambda-expression obj)
     (declare (ignore l cp))
-    (cond ((and name (or (symbolp name) (consp name))) name)
+    (cond #+sbcl
+          ;; handle (SB-C::&OPTIONAL-DISPATCH MAKE-FOO) names introduced around 1.0.15
+          ((and name (consp name) (not (cddr name)) (eql (first name) 'SB-C::&OPTIONAL-DISPATCH))
+           (second name))
+          ;; normal names and (setf name)
+          ((and name (or (symbolp name) (consp name))) name)
           ;;  Try to deal with sbcl's naming convention
           ;; of built in functions (pre 0.9)
           #+sbcl
@@ -754,13 +759,12 @@
                  (*readtable* *sbcl-readtable*))
              (unless (string= new-name "")
                (handler-case (read-from-string new-name)
-                 (error (c) 
+                 (error (c)
                    (declare (ignore c))
                    (store-error "Unable to determine function name for ~A."
                                 obj))))))
           (t (store-error "Unable to determine function name for ~A."
-                          obj)))))
-  
+                          obj)))))  
 
 #-clisp
 (defstore-cl-store (obj function stream)

@@ -13,7 +13,7 @@
                  (cons 'excl::*negative-infinity-single +single-float-neg-inf+)
                  (cons 'excl::*nan-single* +single-float-nan+)))
          (double-float-values ()
-           (list (cons 'excl::*infinity-double*+double-float-inf+)
+           (list (cons 'excl::*infinity-double* +double-float-inf+)
                  (cons 'excl::*negative-infinity-double* +double-float-neg-inf+)
                  (cons 'excl::*nan-double* +double-float-nan+)))
          (long-float-values ()

@@ -89,7 +89,7 @@
   (gethash (referrer-val referrer)
            hash))
 
-(defclass resolving-backend (backend) 
+(defclass resolving-backend (backend)
   ()
   (:documentation "A backend which does the setup for resolving circularities."))
 

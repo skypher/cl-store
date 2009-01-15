@@ -28,7 +28,6 @@ only store the package name")
 ;; store or restore will signal a store-error or a 
 ;; restore-error respectively inside a handler-bind.
 (defun cl-store-report (condition stream)
-  (declare (stream stream))
   (aif (caused-by condition)
        (format stream "~A" it)
        (apply #'format stream (format-string condition) 
