@@ -60,6 +60,10 @@
 (defparameter +unicode-base-string-code+ (register-code 34 'unicode-base-string))
 (defparameter +simple-base-string-code+ (register-code 35 'simple-base-string))
 
+;; T and NIL
+(defparameter +t-code+ (register-code 40 't-object))
+(defparameter +nil-code+ (register-code 41 'nil-object))
+
 ;; setups for type code mapping
 (defun output-type-code (code stream)
   (declare (type ub32 code))
@@ -97,6 +101,18 @@
 (defrestore-cl-store (referrer stream)
   (make-referrer :val (undump-int stream)))
 
+
+(defstore-cl-store (obj (eql t) stream)
+  (output-type-code +t-code+ stream))
+
+(defrestore-cl-store (t-object stream)
+  t)
+
+(defstore-cl-store (obj (eql nil) stream)
+  (output-type-code +nil-code+ stream))
+
+(defrestore-cl-store (nil-object stream)
+  nil)
 
 
 ;; integers

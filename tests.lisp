@@ -710,7 +710,6 @@ bar")
   (when (probe-file *test-file*)
     (ignore-errors (delete-file *test-file*))))
 
-
-(do-tests)
+(run-tests (find-backend 'cl-store:cl-store))
 ;; EOF
 
