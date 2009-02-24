@@ -102,8 +102,8 @@
 (defvar *grouped-store-hash*)
 (defvar *grouped-restore-hash*)
 
-(defun create-serialize-hash ()
-  (make-hash-table :test #'eql :size *store-hash-size*))
+(defun create-serialize-hash (&key (size *store-hash-size*))
+  (make-hash-table :test #'eql :size size))
 
 (defmacro with-serialization-unit ((&key store-hash restore-hash)
                                    &body body)
@@ -154,7 +154,7 @@ hash-tables as produced by the function create-serialize-hash."
 (deftype not-circ ()
   "Type grouping integers and characters, which we
   don't bother to check if they have been stored before"
-  '(or integer character))
+  '(or integer character (member t nil)))
 
 (defun needs-checkp (obj)
   "Do we need to check if this object has been stored before?"
@@ -228,6 +228,7 @@ hash-tables as produced by the function create-serialize-hash."
            (handle-normal backend reader place))
           (t (new-val (internal-restore-object backend reader place))))))
 
+
 (defmethod backend-restore-object ((backend resolving-backend) (place t))
   "Retrieve a object from PLACE, does housekeeping for circularity fixing."
   (declare (optimize speed (safety 1) (debug 0)))
@@ -245,7 +246,7 @@ hash-tables as produced by the function create-serialize-hash."
 (defgeneric int-or-char-p (backend fn)
   (:method ((backend backend) (fn symbol))
     "Is function FN registered to restore an integer or character in BACKEND."
-    (member fn '(integer character)))) 
+    (member fn '(integer character))))
 
 (defun new-val (val)
   "Tries to get a referred value to reduce unnecessary cirularity fixing."

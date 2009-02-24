@@ -1,14 +1,15 @@
-7;;; -*- Mode: LISP; Syntax: ANSI-Common-Lisp; Base: 10 -*-
+;;; -*- Mode: LISP; Syntax: ANSI-Common-Lisp; Base: 10 -*-
 ;; See the file LICENCE for licence information.
 
 ;; The cl-store backend. 
 (in-package :cl-store)
 
-(defbackend cl-store :magic-number 1395477571
+(defbackend cl-store :magic-number 1279478851
+            :compatible-magic-numbers '(1395477571)
             :stream-type '(unsigned-byte 8)
             :old-magic-numbers (1912923 1886611788 1347635532 1886611820 1414745155
-                                1349740876 1884506444 1347643724 1349732684 1953713219
-                                1416850499)
+                                        1349740876 1884506444 1347643724 1349732684 1953713219
+                                        1416850499 1395477571)
             :extends (resolving-backend)
             :fields ((restorers :accessor restorers 
                                 :initform (make-hash-table :size 100))))
@@ -19,7 +20,6 @@
        (setf (gethash code (restorers (find-backend 'cl-store)))
              name))
   code)
-
 
 ;;  Type code constants
 (defparameter +referrer-code+ (register-code 1 'referrer))
@@ -64,6 +64,10 @@
 (defparameter +t-code+ (register-code 40 't-object))
 (defparameter +nil-code+ (register-code 41 'nil-object))
 
+(defparameter +iterative-cons-code+ (register-code 43 'iterative-cons))
+(defparameter +correct-cons-code+ (register-code 44 'correct-cons))
+
+
 ;; setups for type code mapping
 (defun output-type-code (code stream)
   (declare (type ub32 code))
@@ -93,6 +97,7 @@
         (error "Type code ~A is not registered." type-code))))
 
 
+
 ;; referrer, Required for a resolving backend
 (defmethod store-referrer ((backend cl-store) (ref t) (stream t))
   (output-type-code +referrer-code+ stream)
@@ -114,7 +119,6 @@
 (defrestore-cl-store (nil-object stream)
   nil)
 
-
 ;; integers
 ;; The theory is that most numbers will fit in 32 bits 
 ;; so we we have a little optimization for it
@@ -122,9 +126,7 @@
 ;; We need this for circularity stuff.
 (defmethod int-or-char-p ((backend cl-store) (type symbol))
   (declare (optimize speed (safety 0) (space 0) (debug 0)))
-  (or (eql type '32-bit-integer)
-      (eql type 'integer)
-      (eql type 'character)))
+  (find type '(32-bit-integer integer character t-object nil-object)))
 
 (defstore-cl-store (obj integer stream)
   (declare (optimize speed (safety 1) (debug 0)))
@@ -314,17 +316,78 @@
 
 
 ;; Lists
-(defun dump-list (list length last stream)
-  (declare (optimize speed (safety 1) (debug 0))
-           (type cons list))
-  (output-type-code +cons-code+ stream)
-  (store-object length stream)
-  (loop repeat length 
-        for x on list do
-        (store-object (car x) stream))
-  (store-object last stream))
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (defvar *cdr-code* 0)
+  (defvar *eol-code* 1)
+  (defun store-list-code (x stream)
+    (write-byte x stream))
+  (defun read-list-code (stream)
+    (read-byte stream)))
 
-(defun restore-list (stream)
+(defun correct-list-store (list stream)
+  (output-type-code +correct-cons-code+ stream)
+  (store-object (car list) stream)
+  (store-object (cdr list) stream))
+
+(defrestore-cl-store (correct-cons stream)
+  (resolving-object (x (cons nil nil))
+    (setting (car x) (restore-object stream))
+    (setting (cdr x) (restore-object stream))))
+
+
+(defun iterative-list-store (list stream)
+  (output-type-code +iterative-cons-code+ stream)
+  (loop for (object . remaining) on list :do
+        (store-object object stream)
+        (cond ((atom remaining)
+               (store-list-code *eol-code* stream)
+               (store-object remaining stream)
+               (return))
+              ((and *check-for-circs* (gethash remaining *stored-values*))
+               (store-list-code *eol-code* stream)
+               (store-referrer *current-backend* (get-ref remaining) stream)
+               (return))
+              (t (store-list-code *cdr-code* stream)))))
+
+(defrestore-cl-store (iterative-cons stream)
+  (let* ((result (list (restore-object stream)))
+         (tail result))
+    (when (and *check-for-circs* (referrer-p (car result)))
+      (push (delay
+             (setf (car result) (referred-value (car result) *restored-values*)))
+            *need-to-fix*))
+    (loop for next-elt = (read-list-code stream) :do
+          (ecase next-elt
+            ((#.*eol-code*)
+             (let ((obj (restore-object stream)))
+               (if (and *check-for-circs* (referrer-p obj))
+                   (push (delay (setf (cdr tail) (referred-value obj *restored-values*)))
+                         *need-to-fix*)
+                   (setf (cdr tail) obj))
+               (return result)))
+            ((#.*cdr-code*)
+             (setf (cdr tail) (list (restore-object stream))
+                   tail (cdr tail))
+             (when (and *check-for-circs* (referrer-p (car tail)))
+               (let ((tail tail))
+                 (push (delay (setf (car tail) (referred-value (car tail) *restored-values*)))
+                       *need-to-fix*))))))))
+
+(defvar *precise-list-storage* nil
+  "When bound to true the precise list serializer will be used which will ensure that
+all shared structure in a list will be serialized and deserialized correctly.
+This method of storing lists, while more correct than the default, will NOT work with
+large lists as it will blow the stack.
+Binding this variable to true only affects storing and makes no difference when restoring lists.")
+
+(defstore-cl-store (list cons stream)
+  (if *precise-list-storage*
+      (correct-list-store list stream)
+      (iterative-list-store list stream)))
+
+
+;; backward compatability for old lists
+(defrestore-cl-store (cons stream)
   (declare (optimize speed (safety 1) (debug 0)))
   (let* ((conses (restore-object stream))
          (ret ())
@@ -340,7 +403,7 @@
                                (referred-value obj *restored-values*)))
                   *need-to-fix*)))
         (if ret
-            (setf (cdr tail) (list obj) 
+            (setf (cdr tail) (list obj)
                   tail (cdr tail))
             (setf ret (list obj)
                   tail (last ret)))))
@@ -352,13 +415,6 @@
                 *need-to-fix*)
           (setf (cdr tail) last1)))
     ret))
-
-(defstore-cl-store (list cons stream)
-  (multiple-value-bind (length last) (safe-length list)
-    (dump-list list length last stream)))
-
-(defrestore-cl-store (cons stream)
-  (restore-list stream))
 
 
 ;; pathnames

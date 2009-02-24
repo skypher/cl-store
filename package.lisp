@@ -25,7 +25,7 @@
            #:store-32-bit #:read-32-bit #:*check-for-circs*
            #:*store-hash-size* #:*restore-hash-size* #:get-slot-details
            #:*store-used-packages* #:*nuke-existing-packages*
-           #:serializable-slots-using-class
+           #:serializable-slots-using-class #:*precise-list-storage*
 
            ;; Hooks into lower level circularity tracking
            ;; to reduce consing.

@@ -559,8 +559,11 @@ bar")
                     (store list *test-file*)
                     (let ((ret (restore *test-file*)))
                       (and (eq ret (caadr ret))
-                           (eq ret (third ret)))))
+                           (eq ret (third ret))
+                           (eq (cadr ret) (cddr ret)))))
          t)
+
+
 
 ;; large circular lists
 #-abcl
@@ -578,6 +581,12 @@ bar")
                      list))
 
 
+;; Correct list Storing
+(deftest correct.list.1 (let ((*precise-list-storage* t))
+                          (store '(1 2 (a b . #1=(c d e)) 3 4 . #1#) *test-file*)
+                          (let ((restore (restore *test-file*)))
+                            (eq (cddr (third restore)) (nthcdr 5 restore))))
+         t)
 
 ;; custom storing
 (defclass random-obj () ((size :accessor size :initarg :size)))

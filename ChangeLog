@@ -1,3 +1,12 @@
+2009-02-24  Sean Ross <sross@common-lisp.net>
+	0.8.9
+	* default-backend.lisp, circularities.lisp: Updated the serialization of lists to fix the bug reported by gugamilare@gmail.com.
+	OPTIMIZATION: T and NIL are no longer stored as symbols but have custom serializers (which only writes out the type code)
+	FEATURE: Correct List Serialization. A new symbol *precise-list-storage* is now exported from CL-STORE. When bound to true
+	all lists will be serialized in as correct a manner as possible ensuring that shared list structure is correctly tracked.
+	The unfortunate downside to this is that, due to the recursive nature of the method, storing large lists will blow the stack.
+	This provides a workaround for a bug reported in November 2007 by szergling.
+	
 2009-01-05  Sean Ross <sross@common-lisp.net>
 	0.8.6
 	* default-backend.lisp: Use find-symbol to lookup sb-c::&optional-dispatch. Reported by .Andrea Chiumenti
