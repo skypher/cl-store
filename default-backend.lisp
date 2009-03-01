@@ -5,7 +5,7 @@
 (in-package :cl-store)
 
 (defbackend cl-store :magic-number 1279478851
-            :compatible-magic-numbers '(1395477571)
+            :compatible-magic-numbers (1395477571)
             :stream-type '(unsigned-byte 8)
             :old-magic-numbers (1912923 1886611788 1347635532 1886611820 1414745155
                                         1349740876 1884506444 1347643724 1349732684 1953713219
