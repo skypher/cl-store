@@ -58,7 +58,7 @@ CLISP, ECL and AllegroCL are supported.")
                (:file "plumbing")
                (:file "circularities")
                (:file "default-backend")
-               (:non-required-file "custom")))
+               #-ecl (:non-required-file "custom")))
 
 (defmethod perform :after ((o load-op) (c (eql (find-system :cl-store))))
   (funcall (find-symbol "SETUP-SPECIAL-FLOATS" :cl-store))
