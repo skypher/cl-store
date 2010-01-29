@@ -106,9 +106,10 @@ if ERRORP is false, otherwise an error is signalled."
                                  :old-magic-numbers old-magic-numbers
                                  :compatible-magic-numbers compatible-magic-numbers
                                  :stream-type  stream-type)))
-    (if (assoc name *registered-backends*)
-        (cerror "Redefine backend" "Backend ~A is already defined." name)
-        (push (cons name instance) *registered-backends*))
+    (when (assoc name *registered-backends*)
+      (cerror "Redefine backend" "Backend ~A is already defined." name)
+      (setf *registered-backends* (remove name *registered-backends* :key #'car)))
+    (push (cons name instance) *registered-backends*)
     instance))
 
 (defun alias-backend (old alias)
