@@ -219,6 +219,7 @@
 
 ;; Implementations are to provide an implementation for the create-float-value
 ;; function
+#+(not (or sbcl cmucl lispworks))
 (defun create-float-values (value &rest codes)
   "Returns a alist of special float to float code mappings."
   (declare (ignore value codes))
