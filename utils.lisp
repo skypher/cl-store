@@ -20,7 +20,7 @@
     and the objects class")
   (:method ((object standard-object))
    (serializable-slots-using-class object (class-of object)))
-#+(or sbcl cmu openmcl)
+#+(or sbcl cmu openmcl allegro)
   (:method ((object structure-object))
    (serializable-slots-using-class object (class-of object)))
   (:method ((object condition))
@@ -35,7 +35,7 @@
    The default calls compute slots with class")
   (:method ((object t) (class standard-class))
    (class-slots class))
-#+(or sbcl cmu openmcl) 
+#+(or sbcl cmu openmcl allegro) 
   (:method ((object t) (class structure-class))
    (class-slots class))
 #+sbcl

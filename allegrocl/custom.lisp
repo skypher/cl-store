@@ -26,4 +26,11 @@
                   (double-float-values)
                   (long-float-values)))))
 
+(defstore-cl-store (obj structure-object stream)
+  (output-type-code +structure-object-code+ stream)
+  (store-type-object obj stream))
+
+(defrestore-cl-store (structure-object stream)
+  (restore-type-object stream))
+
 ;; EOF
