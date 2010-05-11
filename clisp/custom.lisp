@@ -40,7 +40,7 @@
       (declare (ignore closure-p))
       (if codevec ;; compiled
           ;; TODO What is a suitable default seclass? Currently ()
-          (sys::%make-closure name codevec consts () lambda-list doc)
+          (funcall (find-symbol "%MAKE-CLOSURE" "SYS") name codevec consts () lambda-list doc)
           ;; TODO Any functions to do this programmatically?  How to
           ;; store/restore dynamic, lexical, etc environment.
           (eval lambda-exp)))))
