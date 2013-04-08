@@ -1,7 +1,7 @@
 README for Package CL-STORE.
 Author: Sean Ross 
 Homepage: http://www.common-lisp.net/project/cl-store/
-Version: 0.6
+Version: 0.8.11
 
 0. About.
    CL-STORE is an portable serialization package which 
