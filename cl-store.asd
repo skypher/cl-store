@@ -52,7 +52,7 @@ CLISP, ECL and AllegroCL are supported.")
   :serial t
   :components ((:file "package")
                (:file "utils")
-               #+(or abcl (and clisp (not mop)))
+               #+(and clisp (not mop))
                (:file "mop")
                (:file "backends")
                (:file "plumbing")
