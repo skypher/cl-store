@@ -182,19 +182,19 @@
                        ;; abcl/custom.lisp
                        
                        #:generic-function-name
-                       ;;#:slot-definition-allocation
+                       #:slot-definition-allocation
                        #:slot-definition
                        #:compute-slots
                        ;;#:slot-definition-initform
-                       ;;#:slot-definition-initargs
-                       ;;#:slot-definition-name
-                       ;;#:slot-definition-readers
-                       ;;#:slot-definition-type
-                       ;;#:slot-definition-writers
+                       #:slot-definition-initargs
+                       #:slot-definition-name
+                       #:slot-definition-readers
+                       #:slot-definition-type
+                       #:slot-definition-writers
                        #:class-direct-default-initargs
                        #:class-direct-slots
                        #:class-direct-superclasses
-                       ; #:class-slots
+                       #:class-slots
                        #:ensure-class)
   )
 ;; EOF
