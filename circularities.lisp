@@ -98,6 +98,7 @@
 (defvar *stored-values*)
 
 (defvar *store-hash-size* 50)
+(defvar *restore-hash-size* 50)
 
 (defvar *grouped-store-hash*)
 (defvar *grouped-restore-hash*)
@@ -111,21 +112,23 @@
 structures to be reused.
 The keys store-hash and restore-hash are expected to be either nil or
 hash-tables as produced by the function create-serialize-hash."
-  `(let ((*grouped-store-hash* (or ,store-hash (create-serialize-hash)))
-         (*grouped-restore-hash* (or ,restore-hash (create-serialize-hash))))
+  `(let ((*grouped-store-hash* (or ,store-hash
+				   (create-serialize-hash :size *store-hash-size*)))
+         (*grouped-restore-hash* (or ,restore-hash
+				     (create-serialize-hash :size *restore-hash-size*))))
      ,@body))
 
 (defun get-store-hash ()
   (when *check-for-circs*
     (if (boundp '*grouped-store-hash*)
         (clrhash *grouped-store-hash*)
-        (create-serialize-hash))))
+        (create-serialize-hash :size *store-hash-size*))))
 
 (defun get-restore-hash ()
   (when *check-for-circs*
     (if (boundp '*grouped-restore-hash*)
         (clrhash *grouped-restore-hash*)
-        (create-serialize-hash))))
+        (create-serialize-hash :size *restore-hash-size*))))
 
 (defmethod backend-store :around ((backend resolving-backend) (place t) (obj t))
   (call-next-method))
@@ -188,7 +191,6 @@ hash-tables as produced by the function create-serialize-hash."
 (defvar *restore-counter*)
 (defvar *need-to-fix*)
 (defvar *restored-values*)
-(defvar *restore-hash-size* 50)
 
 (defmethod backend-restore ((backend resolving-backend) (place stream))
   "Restore an object from PLACE using BACKEND. Does the setup for 
