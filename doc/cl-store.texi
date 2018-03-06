@@ -439,7 +439,7 @@ created you can do this.
 @lisp
 (defmethod serializable-slots-using-class 
      ((object t) (class clsql-sys::standard-db-class))
-  (delete 'clsql-sys::view-database (call-next-method)
+  (remove 'clsql-sys::view-database (call-next-method)
           :key 'slot-definition-name))
 @end lisp
 @end deffn
