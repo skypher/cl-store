@@ -12,7 +12,7 @@
   (error "~S is a required argument" name))
 
 (defclass backend ()
-  ((name :accessor name :initform "Unknown" :initarg :name :type symbol)
+  ((name :accessor name :initform :|Unknown| :initarg :name :type symbol)
    (magic-number :accessor magic-number :initarg :magic-number :type integer)
    (compatible-magic-numbers :accessor compatible-magic-numbers
                              :initarg :compatible-magic-numbers :type list)
