@@ -53,6 +53,14 @@
   #+ecl (:import-from #:clos
                       #:generic-function-name
                       #:compute-slots
+		      #:slot-definition
+		      #:slot-definition-name
+		      #:slot-definition-allocation
+		      #:slot-definition-initform
+		      #:slot-definition-initargs
+		      #:slot-definition-writers
+		      #:slot-definition-readers
+		      #:slot-definition-type
                       #:class-direct-default-initargs
                       #:class-direct-slots
                       #:class-direct-superclasses
