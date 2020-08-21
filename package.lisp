@@ -67,6 +67,23 @@
                       #:class-slots
                       #:ensure-class)
   
+  #+clasp (:import-from #:clos
+                        #:generic-function-name
+                        #:slot-definition-allocation
+                        #:slot-definition
+                        #:compute-slots
+                        #:slot-definition-initform
+                        #:slot-definition-initargs
+                        #:slot-definition-name
+                        #:slot-definition-readers
+                        #:slot-definition-type
+                        #:slot-definition-writers
+                        #:class-direct-default-initargs
+                        #:class-direct-slots
+                        #:class-direct-superclasses
+                        #:class-slots
+                        #:ensure-class)
+  
   #+cmu  (:import-from #:pcl
                        #:generic-function-name
                        #:slot-definition-allocation

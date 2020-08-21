@@ -9,10 +9,10 @@
 
 (in-package #:cl-store.system)
 
-#-(or lispworks mcl cmu clisp sbcl allegro ecl openmcl abcl)
+#-(or lispworks mcl cmu clisp sbcl allegro ecl openmcl abcl clasp)
 (error "This is an unsupported lisp implementation.
 Currently only MCL, OpenMCL, Lispworks, CMUCL, SBCL,
-CLISP, ECL and AllegroCL are supported.")
+CLISP, ECL, AllegroCL and CLASP are supported.")
 
 (defclass non-required-file (cl-source-file) ()
   (:documentation
@@ -20,7 +20,7 @@ CLISP, ECL and AllegroCL are supported.")
 
 (defun lisp-system-shortname ()
   #+mcl :mcl #+lispworks :lispworks #+cmu :cmucl #+clisp :clisp #+sbcl :sbcl
-  #+allegro :acl #+ecl :ecl #+openmcl :openmcl #+abcl :abcl)
+  #+allegro :acl #+ecl :ecl #+openmcl :openmcl #+abcl :abcl #+clasp :clasp)
 
 (defmethod component-pathname ((component non-required-file))
   (let ((pathname (call-next-method))

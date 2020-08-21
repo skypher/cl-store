@@ -52,8 +52,8 @@
   (:documentation 
    "Return a list of slot details which can be used 
     as an argument to ensure-class")
-  (:method ((slot-definition #+(or ecl abcl (and clisp (not mop))) t 
-                             #-(or ecl abcl (and clisp (not mop))) slot-definition))
+  (:method ((slot-definition #+(or ecl clasp abcl (and clisp (not mop))) t 
+                             #-(or ecl clasp abcl (and clisp (not mop))) slot-definition))
    (list :name (slot-definition-name slot-definition)
          :allocation (slot-definition-allocation slot-definition)
          :initargs (slot-definition-initargs slot-definition)
