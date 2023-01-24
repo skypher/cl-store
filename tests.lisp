@@ -535,7 +535,7 @@ bar")
                               (foo1-a (foo1-a (foo1-a ret)))))))
   t)
 
-#-abcl
+#-(or abcl clasp)
 (deftest circ.14 (let ((list '#1=(1 2 3 #1# . #1#)))
                    (store list *test-file*)
                    (let ((ret (restore *test-file*)))
@@ -546,7 +546,7 @@ bar")
 
 
 
-#-abcl
+#-(or abcl clasp)
 (deftest circ.15 (let ((list '#1=(1 2 3 #2=(#2#) . #1#)))
                    (store list *test-file*)
                    (let ((ret (restore *test-file*)))
@@ -560,7 +560,7 @@ bar")
 ;; this had me confused for a while since what was
 ;; restored #1=(1 (#1#) #1#) looks nothing like this list,
 ;; but it turns out that it is correct
-#-abcl
+#-(or abcl clasp)
 (deftest circ.16  (let ((list '#1=(1 #2=(#1#) . #2#)))
                     (store list *test-file*)
                     (let ((ret (restore *test-file*)))
